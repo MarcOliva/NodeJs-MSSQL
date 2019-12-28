@@ -9,13 +9,13 @@ const api = express.Router()
 /**GET */
 api.get('/productos', auth, producto.getProductos)
 /**GET */
-api.get('/productos/:productoId', producto.getProducto)
+api.get('/productos/:productoId', auth, producto.getProducto)
 /**POST */
-api.post('/productos', producto.postProducto)
+api.post('/productos', auth, producto.postProducto)
 /**PUT */
-api.put('/productos/:productoId', producto.updateProducto)
+api.put('/productos/:productoId', auth, producto.updateProducto)
 /**DELETE */
-api.delete('/productos/:productoId', producto.deleProduct)
+api.delete('/productos/:productoId', auth, producto.deleProduct)
 
 
 /**USER SERVICES */
@@ -24,7 +24,7 @@ api.post('/signin', user.signIn)
 
 
 
-api.get('/private', auth, function (req, res) {
-    res.status(200).send({ message: "Tienes acceso" })
-})
+// api.get('/private', auth, function (req, res) {
+//     res.status(200).send({ message: "Tienes acceso" })
+// })
 module.exports = api

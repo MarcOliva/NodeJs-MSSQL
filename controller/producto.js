@@ -59,10 +59,13 @@ function postProducto(req, res) {
             .input("precio", sql.Float, producto.precio)
             .query("INSERT INTO [dbo].[Productos] ([nombre],[descripcion],[precio]) VALUES (@nombre, @descripcion,@precio)", (err, response) => {
                 if (err) {
-                    return res.status(500).send({ message: "Error al realizar la peticion" })
+                    return res.status(500).send({ error: true, message: "Error al realizar la peticion" })
                 }
                 console.log("DATA PRODUCTOS")
-                res.status(200).send({ message: "Se registro su producto." })
+                res.status(200).send({
+                    error: false,
+                    message: "Se registro su producto."
+                })
 
                 sql.close()
             })
@@ -85,10 +88,16 @@ function updateProducto(req, res) {
             .input("precio", sql.Float, producto.precio)
             .query("UPDATE [dbo].[Productos] SET [nombre] = @nombre , [descripcion] = @descripcion , [precio] = @precio WHERE id=" + productoId, (err, response) => {
                 if (err) {
-                    return res.status(500).send({ message: "Error al realizar la peticion" })
+                    return res.status(500).send({
+                        error: true,
+                        message: "Error al realizar la peticion"
+                    })
                 }
                 console.log("DATA PRODUCTOS")
-                res.status(200).send({ message: "El producto fue actualizado." })
+                res.status(200).send({
+                    error: false,
+                    message: "El producto fue actualizado."
+                })
 
                 sql.close()
             })
@@ -97,19 +106,26 @@ function updateProducto(req, res) {
 }
 function deleProduct(req, res) {
     let productoId = req.params.productoId
-
+    console.log("ProductoId", productoId)
     sql.connect(config.db, (err) => {
         const request = new sql.Request()
         if (err) { console.log("error en conexion", err); return }
-        request.query("DELETE FROM [dbo].[Productos] WHERE id=" + productoId, (err, response) => {
-            if (err) {
-                return res.status(500).send({ message: "Error al realizar la peticion" })
-            }
-            console.log("DATA PRODUCTOS")
-            res.status(200).send({ message: "El producto fue eliminado correctamente." })
+        request.input("productoId", sql.Int, productoId)
+            .query("DELETE FROM [dbo].[Productos] WHERE id = @productoId", (err, response) => {
+                if (err) {
+                    return res.status(500).send({
+                        error: true,
+                        message: "Error al realizar la peticion"
+                    })
+                }
+                console.log("DATA PRODUCTOS")
+                res.status(200).send({
+                    error: false,
+                    message: "El producto fue eliminado correctamente."
+                })
 
-            sql.close()
-        })
+                sql.close()
+            })
     })
 }
 module.exports = {
